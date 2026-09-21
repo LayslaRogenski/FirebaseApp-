@@ -1,32 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'firebase_options.dart';
 import 'login.dart';
 import 'welcome.dart';
 import 'notes.dart';
+import 'notifications.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await Notifications.init();
+  await Permission.notification.request();
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Firebase App',
       theme: ThemeData(primarySwatch: Colors.indigo),
       home: const AuthGate(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
@@ -37,7 +47,9 @@ class AuthGate extends StatelessWidget {
             body: Center(child: CircularProgressIndicator()),
           );
         }
+
         final user = snap.data;
+
         return user == null ? const LoginPage() : const HomePage();
       },
     );
@@ -50,6 +62,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(title: const Text("Home")),
       drawer: Drawer(
@@ -66,7 +79,7 @@ class HomePage extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.note),
               title: const Text('Anotações'),
-              onTap: () async {
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const NotesPage()),
@@ -87,3 +100,4 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+q
