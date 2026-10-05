@@ -6,7 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'firebase_options.dart';
 import 'login.dart';
 import 'welcome.dart';
-import 'notes.dart';
+import 'notes_backup.dart';
 import 'notifications.dart';
 
 Future<void> main() async {
